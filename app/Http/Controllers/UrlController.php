@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Http;
 
 class UrlController extends Controller
 {
+     public function index()
+    {
+        $urls = Url::all();
+
+        return response()->json($urls);
+    }
+
      public function store(Request $request)
     {
         $request->validate([

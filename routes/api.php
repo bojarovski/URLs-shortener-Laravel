@@ -8,5 +8,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+Route::get('/urls', [UrlController::class, 'index']);
 Route::post('/shorten', [UrlController::class, 'store']);
 Route::get('/{shortUrl}', [UrlController::class, 'redirect']);
