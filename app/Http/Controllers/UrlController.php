@@ -29,7 +29,6 @@ class UrlController extends Controller
             return response()->json(['short_url' => url("/{$existingUrl->short_url}")]);
         }
 
-        // Check with Google Safe Browsing API
         $apiKey = env('GOOGLE_SAFE_BROWSING_API_KEY');
         $response = Http::post("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=$apiKey", [
             'client' => ['clientId' => 'yourcompany', 'clientVersion' => '1.5.2'],
