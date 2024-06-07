@@ -30,7 +30,6 @@ class UrlController extends Controller
             return response()->json(['short_url' => url("/{$existingUrl->short_url}")]);
         }
 
-        // Check with VirusTotal API
         $apiKey = env('VIRUSTOTAL_API_KEY');
         $client = new Client();
 
