@@ -34,7 +34,7 @@ class UrlController extends Controller
         $existingUrl = Url::where('original_url', $originalUrl)->first();
 
         if ($existingUrl) {
-            return response()->json(['short_url' => url("/{$existingUrl->short_url}")]);
+            return response()->json(['original_url' => $existingUrl->original_url]);
         }
 
         $apiKey = env('VIRUSTOTAL_API_KEY');
@@ -70,6 +70,6 @@ class UrlController extends Controller
     public function redirect($shortUrl)
     {
         $url = Url::where('short_url', $shortUrl)->firstOrFail();
-        return redirect($url->original_url);
+        return response()->json($url);
     }
 }
