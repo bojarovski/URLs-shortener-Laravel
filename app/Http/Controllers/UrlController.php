@@ -49,7 +49,6 @@ class UrlController extends Controller
             ]);
 
             $result = json_decode($response->getBody()->getContents(), true);
-            dd($result);
             if (isset($result['positives']) && $result['positives'] > 0) {
                 return response()->json(['error' => 'The URL is unsafe'], 400);
             }
@@ -57,14 +56,19 @@ class UrlController extends Controller
             return response()->json(['error' => 'Error checking URL safety'], 500);
         }
 
-        $shortUrl = Str::random(6);
+
+        $urlParts = parse_url($originalUrl);
+        $hashedUrl = '/' . substr(md5($urlParts['path']), 0, 6);
+
+
+        $shortUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $hashedUrl;
 
         Url::create([
             'original_url' => $originalUrl,
             'short_url' => $shortUrl
         ]);
 
-        return response()->json(['short_url' => url("/$shortUrl")]);
+            return response()->json(['short_url' => url("/$hashedUrl")]);
     }
 
     public function redirect($shortUrl)
