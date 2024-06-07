@@ -10,14 +10,13 @@ class UrlSeeder extends Seeder
 {
    public function run()
     {
-        // Define the URLs you want to seed
+
         $urls = [
             'https://example.com/page1',
             'https://example.com/page2',
             'https://example.com/page3',
         ];
 
-        // Populate the database with the URLs
         foreach ($urls as $url) {
             Url::create([
                 'original_url' => $url,

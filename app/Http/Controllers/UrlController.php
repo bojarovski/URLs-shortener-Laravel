@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Url;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
@@ -16,7 +17,7 @@ class UrlController extends Controller
         return response()->json($urls);
     }
 
-     public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'original_url' => 'required|url'
@@ -29,20 +30,25 @@ class UrlController extends Controller
             return response()->json(['short_url' => url("/{$existingUrl->short_url}")]);
         }
 
-        // Check with Google Safe Browsing API
-        $apiKey = env('GOOGLE_SAFE_BROWSING_API_KEY');
-        $response = Http::post("https://safebrowsing.googleapis.com/v4/threatMatches:find?key=$apiKey", [
-            'client' => ['clientId' => 'yourcompany', 'clientVersion' => '1.5.2'],
-            'threatInfo' => [
-                'threatTypes' => ['MALWARE', 'SOCIAL_ENGINEERING'],
-                'platformTypes' => ['ANY_PLATFORM'],
-                'threatEntryTypes' => ['URL'],
-                'threatEntries' => [['url' => $originalUrl]]
-            ]
-        ]);
+        // Check with VirusTotal API
+        $apiKey = env('VIRUSTOTAL_API_KEY');
+        $client = new Client();
 
-        if ($response->json()) {
-            return response()->json(['error' => 'The URL is unsafe'], 400);
+        try {
+            $response = $client->get('https://www.virustotal.com/vtapi/v2/url/report', [
+                'query' => [
+                    'apikey' => $apiKey,
+                    'resource' => $originalUrl
+                ]
+            ]);
+
+            $result = json_decode($response->getBody()->getContents(), true);
+
+            if (isset($result['positives']) && $result['positives'] > 0) {
+                return response()->json(['error' => 'The URL is unsafe'], 400);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Error checking URL safety'], 500);
         }
 
         $shortUrl = Str::random(6);
