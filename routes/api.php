@@ -9,5 +9,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/urls', [UrlController::class, 'index']);
+Route::get('/url/{id}', [UrlController::class, 'show']);
 Route::post('/shorten', [UrlController::class, 'store']);
 Route::get('/{shortUrl}', [UrlController::class, 'redirect']);

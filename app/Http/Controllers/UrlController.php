@@ -12,7 +12,14 @@ class UrlController extends Controller
 {
      public function index()
     {
-        $urls = Url::all();
+        $urls = Url::select('id', 'short_url')->get();
+
+        return response()->json($urls);
+    }
+
+     public function show($id)
+    {
+        $urls = Url::where('id', $id)->get();
 
         return response()->json($urls);
     }
@@ -42,7 +49,7 @@ class UrlController extends Controller
             ]);
 
             $result = json_decode($response->getBody()->getContents(), true);
-
+            dd($result);
             if (isset($result['positives']) && $result['positives'] > 0) {
                 return response()->json(['error' => 'The URL is unsafe'], 400);
             }
