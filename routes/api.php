@@ -11,4 +11,4 @@ Route::get('/user', function (Request $request) {
 Route::get('/urls', [UrlController::class, 'index']);
 Route::get('/url/{id}', [UrlController::class, 'show']);
 Route::post('/shorten', [UrlController::class, 'store']);
-Route::get('/{shortUrl}', [UrlController::class, 'redirect']);
+Route::get('/{code}', [UrlController::class, 'redirect']);

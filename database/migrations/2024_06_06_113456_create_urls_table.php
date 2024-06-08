@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('original_url')->unique();
             $table->string('short_url')->unique();
+            $table->string('code')->unique();
             $table->timestamps();
         });
     }

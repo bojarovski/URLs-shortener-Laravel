@@ -5,19 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Url;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Http;
 
 class UrlController extends Controller
 {
-     public function index()
+    public function index()
     {
-        $urls = Url::select('id', 'short_url')->get();
+        $urls = Url::select('id', 'short_url', 'code')->get();
 
         return response()->json($urls);
     }
 
-     public function show($id)
+    public function show($id)
     {
         $urls = Url::where('id', $id)->get();
 
@@ -41,7 +39,7 @@ class UrlController extends Controller
         $client = new Client();
 
         try {
-            $response = $client->get('https://www.virustotal.com/vtapi/v2/url/report', [
+            $response = $client->get(env('URL_API'), [
                 'query' => [
                     'apikey' => $apiKey,
                     'resource' => $originalUrl
@@ -58,22 +56,21 @@ class UrlController extends Controller
 
 
         $urlParts = parse_url($originalUrl);
-        $hashedUrl = '/' . substr(md5($urlParts['path']), 0, 6);
-
-
-        $shortUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . $hashedUrl;
+        $hashedUrl = substr(md5($urlParts['path'] . microtime()), 0, 6);
+        $shortUrl = $urlParts['scheme'] . '://' . $urlParts['host']. '/' . $hashedUrl;
 
         Url::create([
             'original_url' => $originalUrl,
-            'short_url' => $shortUrl
+            'short_url' => $shortUrl,
+            'code'=> $hashedUrl,
         ]);
 
             return response()->json(['short_url' => url("/$hashedUrl")]);
     }
 
-    public function redirect($shortUrl)
+    public function redirect($code)
     {
-        $url = Url::where('short_url', $shortUrl)->firstOrFail();
+        $url = Url::where('code', $code)->firstOrFail();
         return response()->json($url);
     }
 }
