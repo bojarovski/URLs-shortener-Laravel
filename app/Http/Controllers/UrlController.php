@@ -58,14 +58,13 @@ class UrlController extends Controller
         $urlParts = parse_url($originalUrl);
         $hashedUrl = substr(md5($urlParts['path'] . microtime()), 0, 6);
         $shortUrl = $urlParts['scheme'] . '://' . $urlParts['host']. '/' . $hashedUrl;
-
         Url::create([
             'original_url' => $originalUrl,
             'short_url' => $shortUrl,
             'code'=> $hashedUrl,
         ]);
 
-            return response()->json(['short_url' => url("/$hashedUrl")]);
+        return response()->json(['original_url' =>  $originalUrl]);
     }
 
     public function redirect($code)

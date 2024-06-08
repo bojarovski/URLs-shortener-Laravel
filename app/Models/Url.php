@@ -12,5 +12,6 @@ class Url extends Model
     protected $fillable = [
         'original_url',
         'short_url',
+        'code',
     ];
 }
