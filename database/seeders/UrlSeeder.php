@@ -10,18 +10,6 @@ class UrlSeeder extends Seeder
 {
    public function run()
     {
-
-        $urls = [
-            'https://example.com/page1',
-            'https://example.com/page2',
-            'https://example.com/page3',
-        ];
-
-        foreach ($urls as $url) {
-            Url::create([
-                'original_url' => $url,
-                'short_url' => substr(md5($url), 0, 6)
-            ]);
-        }
+        Url::factory()->count(5)->create();
     }
 }
