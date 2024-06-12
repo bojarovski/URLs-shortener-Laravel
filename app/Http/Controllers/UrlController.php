@@ -39,7 +39,7 @@ class UrlController extends Controller
             return response()->json(['error' => $result['error']], 400);
         }
 
-        return response()->json(['original_url' => $result]);
+        return response()->json(['original_url' => $originalUrl]);
     }
 
     public function redirect($code)
