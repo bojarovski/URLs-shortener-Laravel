@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\UrlRepository;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(Client::class, function ($app) {
+            return new Client();
+        });
+
+        $this->app->singleton(UrlRepository::class, function ($app) {
+            return new UrlRepository();
+        });
     }
 
     /**
